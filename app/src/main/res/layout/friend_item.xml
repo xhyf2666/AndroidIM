@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="80dp"
+    android:background="#FFFFFF"
+    >
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="45dp"
+        android:layout_height="65dp"
+        android:layout_weight="1"
+        app:srcCompat="@drawable/icon_voice" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_weight="5"
+        android:paddingLeft="10dp"
+        android:paddingTop="10dp"
+        >
+        <TextView
+            android:id="@+id/item_friend_name"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="友人A"
+            android:textColor="#050505"
+            android:textStyle="bold"
+            android:textSize="20dp" />
+    </LinearLayout>
+    <TextView
+        android:id="@+id/item_friend_todo"
+        android:layout_width="30dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:paddingTop="25dp"
+        android:textStyle="bold"
+        android:text="· · ·"
+        android:textColor="#515151"
+        android:textSize="20dp" />
+
+</LinearLayout>

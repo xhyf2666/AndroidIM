@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:id="@+id/list_item"
+    android:layout_height="wrap_content">
+
+
+    <LinearLayout
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:orientation="vertical">
+        <TextView
+            android:layout_gravity="top"
+            android:id="@+id/groupUserNameOther"
+            android:scaleType="centerInside"
+            android:text="用户名"
+            android:layout_width="100dp"
+            android:layout_height="20dp"/>
+        <ImageView
+            android:background="@drawable/ic_girl"
+            android:layout_gravity="bottom"
+            android:id="@+id/chat_person_from"
+            android:scaleType="centerInside"
+            android:layout_width="40dp"
+            android:layout_height="40dp"/>
+
+    </LinearLayout>
+    <FrameLayout
+        android:layout_weight="50"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/bubbleOther"
+            android:layout_marginLeft="0dp"
+            android:layout_width="150dp"
+            android:background="@drawable/ic_bubble_other"
+            android:layout_gravity="left"
+            android:layout_height="match_parent" />
+        <ImageView
+            android:id="@+id/bubbleSelf"
+            android:layout_marginRight="0dp"
+            android:layout_width="150dp"
+            android:layout_gravity="right"
+            android:background="@drawable/ic_bubble_slef"
+            android:layout_height="match_parent" />
+        <TextView
+            android:id="@+id/chat_contentOther"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginRight="10dp"
+            android:layout_weight="60" />
+        <TextView
+            android:id="@+id/chat_contentSelf"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="40dp"
+            android:layout_weight="60" />
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:orientation="vertical">
+        <TextView
+            android:layout_gravity="top"
+            android:id="@+id/groupUserNameSelf"
+            android:scaleType="centerInside"
+            android:text="用户名"
+            android:layout_width="100dp"
+            android:layout_height="20dp"/>
+        <ImageView
+            android:layout_gravity="bottom"
+            android:background="@drawable/ic_boy"
+            android:id="@+id/chat_person_self"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_weight="20" />
+    </LinearLayout>
+
+
+</LinearLayout>
