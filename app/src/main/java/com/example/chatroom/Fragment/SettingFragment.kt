@@ -5,8 +5,6 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.database.Cursor
-import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
@@ -15,7 +13,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.RelativeLayout
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -41,12 +38,16 @@ class SettingFragment : Fragment() {
     @Deprecated("Deprecated in Java")
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        var button=activity?.findViewById<Button>(R.id.button_change_background)
-        button?.setOnClickListener(){
+        var buttonBackground=activity?.findViewById<Button>(R.id.button_change_background)
+        buttonBackground?.setOnClickListener(){
             checkPermission()
             val intent = Intent(Intent.ACTION_PICK)
             intent.type = "image/*"
             startActivityForResult(intent, RequestCodeGetImage)
+        }
+        var buttonLogout=activity?.findViewById<Button>(R.id.button_logout)
+        buttonLogout?.setOnClickListener(){
+            activity?.finish()
         }
     }
 

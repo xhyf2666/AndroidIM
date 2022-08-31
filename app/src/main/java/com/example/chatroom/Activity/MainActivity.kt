@@ -11,6 +11,7 @@ import com.example.chatroom.Fragment.PrivateFragment
 import com.example.chatroom.Fragment.GroupFragment
 import com.example.chatroom.R
 import com.example.chatroom.databinding.ActivityMainBinding
+import com.example.chatroom.model.Content
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -118,5 +119,10 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Content.client.logout()
     }
 }
