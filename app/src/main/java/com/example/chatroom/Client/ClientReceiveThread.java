@@ -1,6 +1,7 @@
 package com.example.chatroom.Client;
 
 import com.example.chatroom.DataBase.Message;
+import com.example.chatroom.Utils.FileSaver;
 import com.example.chatroom.model.Common;
 import com.google.gson.Gson;
 import com.example.chatroom.model.Content;
@@ -214,28 +215,37 @@ public class ClientReceiveThread implements Runnable {
         System.out.println("文件"+body+"上传成功");
         Content.upLoadFileMap.remove(body);
         Content.onFile=false;
+        if (Content.groupChatHandler!=null){
+            msg=new android.os.Message();
+            msg.obj="文件"+body+"传输成功";
+            msg.what= Common.handler_sendFileSuccess;
+            Content.groupChatHandler.sendMessage(msg);
+        }
 
     }
 
     private void receiveFileInfo(int from,int to,String body){
-//        boolean isGroup= body.substring(0,body.indexOf(";")).equals("1");
-//        body=body.substring(body.indexOf(";")+1);
-//        long fileLength= Long.parseLong(body.substring(0,body.indexOf(";")));
-//        String filename=body.substring(body.indexOf(";")+1);
-//        if(isGroup){
-//            //在聊天界面显示相应提示
-//            Platform.runLater(()->{
-//                mainController.addGroupFile(from, to, fileLength, filename);
-//            });
-//            FileSaver fileSaver=new FileSaver(from,to,fileLength,filename,isGroup);
-//            if(Content.groupFileReceiveMap.get(from)==null)
-//                Content.groupFileReceiveMap.put(from,new HashMap<String,FileSaver>());
-//            Content.groupFileReceiveMap.get(from).put(filename,fileSaver);
-//            System.out.println("" + from + "尝试发送文件(群聊)" + filename + ",文件字节" + fileLength);
+        boolean isGroup= body.substring(0,body.indexOf(";")).equals("1");
+        body=body.substring(body.indexOf(";")+1);
+        long fileLength= Long.parseLong(body.substring(0,body.indexOf(";")));
+        String filename=body.substring(body.indexOf(";")+1);
+        if(isGroup){
+
+            FileSaver fileSaver=new FileSaver(from,to,fileLength,filename,isGroup);
+            if(Content.groupFileReceiveMap.get(from)==null)
+                Content.groupFileReceiveMap.put(from,new HashMap<String,FileSaver>());
+            Content.groupFileReceiveMap.get(from).put(filename,fileSaver);
+            System.out.println("" + from + "尝试发送文件(群聊)" + filename + ",文件字节" + fileLength);
+            if (Content.groupChatHandler!=null){
+                msg=new android.os.Message();
+                msg.obj=fileSaver;
+                msg.what= Common.handler_fileInfo;
+                Content.groupChatHandler.sendMessage(msg);
+            }
 //            //此时默认下载文件
 //            //Content.client.receiveFileGroup(fileSaver.getFileName(),fileSaver.getFileLength(),fileSaver.getFrom(),fileSaver.getTo());
-//        }
-//        else {
+        }
+        else {
 //            //在聊天界面显示相应提示
 //            if(Content.privateChatRecord.containsKey(from)){
 //                Content.privateChatRecord.get(from).add("0" + filename);
@@ -260,7 +270,7 @@ public class ClientReceiveThread implements Runnable {
 //            System.out.println("" + from + "尝试发送文件" + filename + ",文件字节" + fileLength);
 //
 //            //Content.client.receiveFilePrivate(fileSaver.getFileName(),fileSaver.getFileLength(),fileSaver.getFrom());
-//        }
+        }
     }
 
     private void handleVideoChatReply(int from,String body){

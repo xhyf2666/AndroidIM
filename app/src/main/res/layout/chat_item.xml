@@ -48,7 +48,7 @@
             android:layout_width="120dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginRight="10dp"
+            android:layout_marginRight="50dp"
             android:layout_weight="60" />
         <TextView
             android:id="@+id/chat_contentSelf"
@@ -79,5 +79,37 @@
             android:layout_weight="20" />
     </LinearLayout>
 
+    <TextView
+        android:layout_gravity="top"
+        android:id="@+id/groupFileInfoFrom"
+        android:scaleType="centerInside"
+        android:visibility="invisible"
+        android:text="文件"
+        android:layout_width="0dp"
+        android:layout_height="20dp"/>
+    <TextView
+        android:layout_gravity="top"
+        android:id="@+id/groupFileInfoTo"
+        android:scaleType="centerInside"
+        android:visibility="invisible"
+        android:text="文件"
+        android:layout_width="0dp"
+        android:layout_height="20dp"/>
+    <TextView
+        android:layout_gravity="top"
+        android:id="@+id/groupFileInfoLength"
+        android:scaleType="centerInside"
+        android:visibility="invisible"
+        android:text="文件"
+        android:layout_width="0dp"
+        android:layout_height="20dp"/>
+    <TextView
+        android:layout_gravity="top"
+        android:id="@+id/groupFileInfoName"
+        android:scaleType="centerInside"
+        android:visibility="invisible"
+        android:text="文件"
+        android:layout_width="0dp"
+        android:layout_height="20dp"/>
 
 </LinearLayout>

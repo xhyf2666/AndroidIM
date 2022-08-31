@@ -5,24 +5,23 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.drawable.BitmapDrawable
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.Message
-import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.get
 import androidx.fragment.app.Fragment
+import com.example.chatroom.Activity.PrivateActivity
 import com.example.chatroom.Adapter.ChatAdapter
 import com.example.chatroom.Item.ChatItem
 import com.example.chatroom.R
+import com.example.chatroom.Utils.FileSaver
 import com.example.chatroom.Utils.RealPathUtil
 import com.example.chatroom.model.Common
 import com.example.chatroom.model.Content
@@ -48,6 +47,15 @@ class GroupFragment : Fragment() {
                     val message: com.example.chatroom.DataBase.Message =
                         gson.fromJson(msg.obj.toString(), com.example.chatroom.DataBase.Message::class.java)
                     val item=ChatItem(true,message.body,Content.idNameRecord[message.from],message.from)
+                    msgs.add(item)
+                    adapter.notifyDataSetChanged()
+                }
+                Common.handler_sendFileSuccess->{
+                    Toast.makeText(context,msg.obj.toString(),Toast.LENGTH_SHORT).show()
+                }
+                Common.handler_fileInfo->{
+                    var fileSaver= msg.obj as FileSaver
+                    val item=ChatItem(true,fileSaver.fileName,Content.idNameRecord[fileSaver.from],fileSaver.from,fileSaver)
                     msgs.add(item)
                     adapter.notifyDataSetChanged()
                 }
@@ -77,6 +85,13 @@ class GroupFragment : Fragment() {
         }
         adapter = ChatAdapter(context, R.layout.chat_item, msgs)
         messageList?.adapter=adapter
+        messageList?.setOnItemClickListener { parent,view,position,id ->
+            var item= msgs?.get(position) as ChatItem
+            if(item.fileSaver!=null){
+                Toast.makeText(context,item.fileSaver.fileName,Toast.LENGTH_SHORT).show()
+                showDonwloadDialog(item.fileSaver)
+            }
+        }
         activity?.findViewById<Button>(R.id.buttonGroupSend)?.setOnClickListener(){
             val str=input?.text.toString()
             if (!str.equals("")){
@@ -125,6 +140,10 @@ class GroupFragment : Fragment() {
                         var file=RealPathUtil.getRealPath(context,uri)
                         System.out.println()
                         Content.client.sendFileGroup(file,groupID)
+
+                        val item=ChatItem(false,"发送文件:"+ File(file).name,"自己",Content.id)
+                        msgs.add(item)
+                        adapter.notifyDataSetChanged()
                     }
                 }
             }
@@ -152,10 +171,10 @@ class GroupFragment : Fragment() {
     }
 
     //显示删除录音提示框
-    private fun showDeleteDialog() {
+    private fun showDonwloadDialog(fileSaver: FileSaver) {
         val builder = AlertDialog.Builder(context)
-        builder.setTitle("提示")
-        builder.setMessage("您确定要删除当前录音吗？")
+        builder.setTitle("文件下载")
+        builder.setMessage("文件名:"+fileSaver.fileName+"\n您确定要下载当前文件吗？")
 
         builder.setPositiveButton(
             "确定"

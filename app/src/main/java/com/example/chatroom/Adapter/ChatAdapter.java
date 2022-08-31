@@ -14,6 +14,7 @@ import androidx.annotation.Nullable;
 
 import com.example.chatroom.Item.ChatItem;
 import com.example.chatroom.R;
+import com.example.chatroom.Utils.FileSaver;
 
 import java.util.List;
 
@@ -27,7 +28,7 @@ public class ChatAdapter extends ArrayAdapter<ChatItem> {
 
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        ChatItem ch_content = getItem(position);
+        ChatItem item = getItem(position);
         View view = LayoutInflater.from(getContext()).inflate(resourceId,parent,false);
         ImageView from = view.findViewById(R.id.chat_person_from);
         TextView contentOther = view.findViewById(R.id.chat_contentOther);
@@ -38,7 +39,7 @@ public class ChatAdapter extends ArrayAdapter<ChatItem> {
         TextView groupUserNameSelf = view.findViewById(R.id.groupUserNameSelf);
         TextView groupUserNameOther = view.findViewById(R.id.groupUserNameOther);
         //来自其他人
-        if(ch_content.getFromOther()){
+        if(item.getFromOther()){
             bubbleOther.setVisibility(View.VISIBLE);
             bubbleSelf.setVisibility(View.INVISIBLE);
             from.setVisibility(View.VISIBLE);
@@ -53,10 +54,23 @@ public class ChatAdapter extends ArrayAdapter<ChatItem> {
             contentOther.setVisibility(View.INVISIBLE);
             groupUserNameOther.setVisibility(View.INVISIBLE);
         }
-        contentSelf.setText(ch_content.getContent());
-        contentOther.setText(ch_content.getContent());
-        groupUserNameSelf.setText(ch_content.getName());
-        groupUserNameOther.setText(ch_content.getName());
+        contentSelf.setText(item.getContent());
+        contentOther.setText(item.getContent());
+        groupUserNameSelf.setText(item.getName());
+        groupUserNameOther.setText(item.getName());
+        if (item.getFileSaver()!=null){
+            FileSaver fileSaver= item.getFileSaver();
+            TextView fileFrom=view.findViewById(R.id.groupFileInfoFrom);
+            TextView fileTo=view.findViewById(R.id.groupFileInfoTo);
+            TextView fileLength=view.findViewById(R.id.groupFileInfoLength);
+            TextView fileName=view.findViewById(R.id.groupFileInfoName);
+            fileFrom.setText(""+fileSaver.getFrom());
+            fileTo.setText(""+fileSaver.getTo());
+            fileLength.setText(""+fileSaver.getFileLength());
+            fileName.setText(fileSaver.getFileName());
+            contentOther.setText("文件:"+item.getContent());
+        }
+
         return  view;
     }
 }
