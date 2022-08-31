@@ -7,4 +7,20 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="gray">#FFB0C4DE</color>
+    <color name="grayTrans">#AAB0C4DE</color>
+    <color name="transparent">#00ffffff</color>
+    <color name="Crimson">#FFDC143C</color>
+    <color name="CrimsonTrans">#9ADC143C</color>
+    <color name="colorPrimary">#008577</color>
+    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorWhite">#FFFFFFFF</color>
+    <color name="colorBlue">#6495ED</color>
+    <color name="Salmon">#FA8072</color>
+    <color name="whiteTrans">#80FFFFFF</color>
+    <color name="blackTrans">#AA000000</color>
+    <color name="blueTrans">#996495ED</color>
+    <color name="clayBlack">#232323</color>
+    <color name="SeaShell">    #FFF5EE</color>
+    <color name="AliceBlue">#59F0F8FF</color>
 </resources>

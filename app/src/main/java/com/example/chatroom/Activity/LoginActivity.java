@@ -53,7 +53,10 @@ public class LoginActivity extends AppCompatActivity {
                             Content.client=new Client(Content.server,Content.port);
                             Content.userName=userName;
                             Content.client.login(userName,password);
+
+                            Thread.sleep(1000);
                             Content.client.getUserNameList();
+                            Thread.sleep(1000);
                             Content.client.getUserList();
                         } catch (Exception e) {
                             Log.e("chatroom", e.getMessage());
@@ -84,7 +87,9 @@ public class LoginActivity extends AppCompatActivity {
                             Content.userName=userName;
                             Content.client.register(userName,password);
 
+                            Thread.sleep(1000);
                             Content.client.getUserNameList();
+                            Thread.sleep(1000);
                             Content.client.getUserList();
                         } catch (Exception e) {
                             Log.e("chatroom", e.getMessage());
@@ -98,7 +103,6 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     class loginHandler extends Handler {
-
         // 通过覆写handlerMessage() 从而确定更新UI的操作
         @Override
         public void handleMessage(Message msg) {
@@ -111,7 +115,6 @@ public class LoginActivity extends AppCompatActivity {
             }
         }
     }
-
 }
 
 

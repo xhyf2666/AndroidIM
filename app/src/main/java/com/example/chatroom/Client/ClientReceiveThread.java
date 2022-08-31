@@ -283,9 +283,9 @@ public class ClientReceiveThread implements Runnable {
                     msg.what= Common.handler_videoChatAccept;
                     Content.mainHandler.sendMessage(msg);
 
-//                Content.isVideo=true;
+                Content.isVideo=true;
 //                Content.isVoice=true;
-//                new Thread(new VideoChatThread(Content.server,Content.port+1,client.getId(),from)).start();
+                new Thread(new VideoChatThread(Content.server,Content.port+1,client.getId(),from)).start();
 //                new Thread(new VoiceChatThread(Content.server,Content.port+2,client.getId(),from)).start();
                 }
             }

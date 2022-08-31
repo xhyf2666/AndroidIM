@@ -45,6 +45,14 @@ class PrivateActivity : AppCompatActivity() {
                 Common.handler_videoChatReject->{
                     showDialog("视频通话",msg.obj.toString())
                 }
+                Common.handler_videoChatRequest->{
+                    val from = msg.obj as Int
+                    showVideoReplyDialog("视频通话","用户"+Content.idNameRecord[from]+"向你发起了视频通话\n是否接受?",from)
+                }
+                Common.handler_videoChatAccept->{
+                    val intent = Intent(baseContext, VideoChatActivity::class.java)
+                    startActivity(intent)
+                }
             }
         }
     }
@@ -119,10 +127,12 @@ class PrivateActivity : AppCompatActivity() {
     }
 
     //检查权限，获取权限
-    private fun checkPermission() {
+    public fun checkPermission() {
         val permissions = arrayOf(
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.READ_EXTERNAL_STORAGE
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.CAMERA,
+            Manifest.permission.RECORD_AUDIO
         )
         val requireList = ArrayList<String>()
         for (permission in permissions) {
@@ -136,6 +146,7 @@ class PrivateActivity : AppCompatActivity() {
             ActivityCompat.requestPermissions(this, permissions, 1)
         }
     }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.getItemId()) {
             android.R.id.home -> {
@@ -146,6 +157,24 @@ class PrivateActivity : AppCompatActivity() {
         }
     }
 
+    private fun showVideoReplyDialog(title:String ,message:String,from:Int) {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle(title)
+        builder.setMessage(message)
+        builder.setPositiveButton(
+            "接受"
+        ) { _, _ ->
+            Content.client.sendVideoChatReply(from,"ok")
+        }
+        builder.setNegativeButton(
+            "拒绝"
+        ) { _, _ ->
+            Content.client.sendVideoChatReply(from,"reject")
+        }
+        val dialog = builder.create()
+        dialog.show()
+    }
+
     private fun showDialog(title:String ,message:String) {
         val builder = AlertDialog.Builder(this)
         builder.setTitle(title)
@@ -154,6 +183,11 @@ class PrivateActivity : AppCompatActivity() {
         builder.setPositiveButton("确定", null)
         val dialog = builder.create()
         dialog.show()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Content.privateChatHandler=null
     }
 
 }

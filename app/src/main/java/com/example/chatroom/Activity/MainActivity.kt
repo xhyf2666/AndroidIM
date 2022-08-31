@@ -1,7 +1,9 @@
 package com.example.chatroom.Activity
 
+import android.Manifest
 import android.app.AlertDialog
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
@@ -9,6 +11,8 @@ import android.os.Looper
 import android.os.Message
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.viewpager2.widget.ViewPager2
 import com.example.chatroom.Adapter.ViewPager2Adapter
 import com.example.chatroom.Fragment.SettingFragment
@@ -41,6 +45,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
+        checkPermission()
         Content.mainHandler=handler
         setContentView(binding.root)
         val adapter = ViewPager2Adapter(this)
@@ -148,6 +153,7 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         Content.client.logout()
+        Content.mainHandler=null
     }
 
     private fun showVideoReplyDialog(title:String ,message:String,from:Int) {
@@ -166,5 +172,26 @@ class MainActivity : AppCompatActivity() {
         }
         val dialog = builder.create()
         dialog.show()
+    }
+
+    //检查权限，获取权限
+    public fun checkPermission() {
+        val permissions = arrayOf(
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.CAMERA,
+            Manifest.permission.RECORD_AUDIO
+        )
+        val requireList = ArrayList<String>()
+        for (permission in permissions) {
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    permission
+                ) != PackageManager.PERMISSION_GRANTED
+            ) requireList.add(permission)
+        }
+        if (requireList.isNotEmpty()) {
+            ActivityCompat.requestPermissions(this, permissions, 1)
+        }
     }
 }

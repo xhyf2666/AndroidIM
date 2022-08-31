@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Android Studio Project/chatroom/app/src/main/res/drawable/btn_xxx.xml" value="0.1" />
         <entry key="..\:/Android Studio Project/chatroom/app/src/main/res/drawable/ic_boy.xml" value="0.1" />
         <entry key="..\:/Android Studio Project/chatroom/app/src/main/res/drawable/ic_button_blue.xml" value="0.1" />
         <entry key="..\:/Android Studio Project/chatroom/app/src/main/res/drawable/ic_button_white.xml" value="0.1" />
@@ -10,11 +11,11 @@
         <entry key="..\:/Android Studio Project/chatroom/app/src/main/res/drawable/ic_girl.xml" value="0.1" />
         <entry key="..\:/Android Studio Project/chatroom/app/src/main/res/drawable/ic_smallicon.xml" value="0.1" />
         <entry key="..\:/Android Studio Project/chatroom/app/src/main/res/drawable/record.xml" value="0.1" />
-        <entry key="..\:/Android Studio Project/chatroom/app/src/main/res/layout/activity_login.xml" value="0.1125" />
+        <entry key="..\:/Android Studio Project/chatroom/app/src/main/res/layout/activity_login.xml" value="0.264" />
         <entry key="..\:/Android Studio Project/chatroom/app/src/main/res/layout/activity_main.xml" value="0.2" />
         <entry key="..\:/Android Studio Project/chatroom/app/src/main/res/layout/activity_main2.xml" value="0.1125" />
         <entry key="..\:/Android Studio Project/chatroom/app/src/main/res/layout/activity_private.xml" value="0.2" />
-        <entry key="..\:/Android Studio Project/chatroom/app/src/main/res/layout/activity_video_chat.xml" value="0.12604166666666666" />
+        <entry key="..\:/Android Studio Project/chatroom/app/src/main/res/layout/activity_video_chat.xml" value="0.176" />
         <entry key="..\:/Android Studio Project/chatroom/app/src/main/res/layout/chatItem.xml" value="0.175" />
         <entry key="..\:/Android Studio Project/chatroom/app/src/main/res/layout/chat_item.xml" value="0.264" />
         <entry key="..\:/Android Studio Project/chatroom/app/src/main/res/layout/fragment_group.xml" value="0.264" />

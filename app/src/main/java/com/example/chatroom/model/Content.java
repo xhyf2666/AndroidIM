@@ -5,6 +5,7 @@ import android.os.Handler;
 import com.example.chatroom.Client.Client;
 import com.example.chatroom.Utils.FileSaver;
 
+import java.io.DataOutputStream;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,6 +22,7 @@ public class Content {
     public static Handler groupChatHandler;
     public static Handler privateChatHandler;
     public static Handler mainHandler;
+    public static Handler videoChatHandler;
     //public static ArrayList<String> msg = new ArrayList<>();
     public static String foucedPrivateUser;
     public static HashMap<String, Integer> userList = new HashMap();//当前的用户列表<用户名， 用户ID>
@@ -28,6 +30,7 @@ public class Content {
     public static HashMap<Integer, ArrayList<String>> privateChatRecord = new HashMap<>();//私聊记录<id， 记录>
     public static HashMap<Integer,String> idNameRecord=new HashMap<>();//记录id与用户名的映射关系
     public static int videoChatID;//视频聊天的对象
+    public static DataOutputStream videoOutputStream;
 //    public static VideoController videoController;
     public static int bytelength=8196*20;
     public static final int PART_BYTE=bytelength-2-4;

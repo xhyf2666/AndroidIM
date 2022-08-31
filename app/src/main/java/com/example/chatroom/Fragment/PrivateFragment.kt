@@ -55,8 +55,11 @@ class PrivateFragment : Fragment() {
         super.onStart()
         Content.privateHandler=handler
         Thread(Runnable {
-            Content.client.getUserNameList()
             Content.client.getUserList()
+            Thread.sleep(2000)
+
+            Content.client.getUserNameList()
+
         }).start()
     }
 
@@ -84,6 +87,8 @@ class PrivateFragment : Fragment() {
         super.onResume()
         Thread(Runnable {
             Content.client.getUserList()
+            Thread.sleep(2000)
+
             Content.client.getUserNameList()
         }).start()
     }
