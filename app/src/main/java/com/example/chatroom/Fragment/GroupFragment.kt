@@ -170,7 +170,6 @@ class GroupFragment : Fragment() {
         }
     }
 
-    //显示删除录音提示框
     private fun showDonwloadDialog(fileSaver: FileSaver) {
         val builder = AlertDialog.Builder(context)
         builder.setTitle("文件下载")

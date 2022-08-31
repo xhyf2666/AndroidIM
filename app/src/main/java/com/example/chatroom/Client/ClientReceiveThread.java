@@ -274,60 +274,47 @@ public class ClientReceiveThread implements Runnable {
     }
 
     private void handleVideoChatReply(int from,String body){
-//        if(Content.videoChatID==from){
-//            if(body.equals("ok")){
-//                System.out.println("开始视频通话");
-//                //TODO 前端开启视频窗口
+        if(Content.videoChatID==from){
+            if(body.equals("ok")){
+                System.out.println("开始视频通话");
+                if (Content.mainHandler!=null){
+                    msg=new android.os.Message();
+                    msg.obj="开始视频通话";
+                    msg.what= Common.handler_videoChatAccept;
+                    Content.mainHandler.sendMessage(msg);
+
 //                Content.isVideo=true;
 //                Content.isVoice=true;
-//                Platform.runLater(()->{
-//                    mainController.showVideo(Content.idNameRecord.get(from));
-//                });
 //                new Thread(new VideoChatThread(Content.server,Content.port+1,client.getId(),from)).start();
 //                new Thread(new VoiceChatThread(Content.server,Content.port+2,client.getId(),from)).start();
-//            }
-//            else if(body.equals("reject")){
-//                System.out.println("对方拒绝了视频通话");
-//                //聊天界面显示
-//                Platform.runLater(()->{
-//                    Content.privateChatWindows.get(from).addPrivateSelf(from, new Date(), "对方拒绝了视频通话");
-//                });
-//            }
-//        }
-//        else{
-//            String[] str=body.split(";");
-//            System.out.println(str[1]);
-//        }
+                }
+            }
+            else if(body.equals("reject")){
+                System.out.println("对方拒绝了视频通话");
+                //聊天界面显示
+                if (Content.privateChatHandler!=null){
+                    msg=new android.os.Message();
+                    msg.obj="对方拒绝了视频通话";
+                    msg.what= Common.handler_videoChatReject;
+                    Content.privateChatHandler.sendMessage(msg);
+                }
+            }
+        }
+        else{
+            String[] str=body.split(";");
+            System.out.println(str[1]);
+        }
     }
 
     private void handleVideoChat(int from,String body){
-//        System.out.println("用户"+Content.idNameRecord.get(from)+"向你发起了视频通话");
-//        //聊天界面显示,能够选择接收或拒绝
-//        Platform.runLater(()->{
-//            Stage alert = new Stage();
-//            VBox vbox = new VBox();
-//            Label label = new Label("用户"+Content.idNameRecord.get(from)+"向你发起了视频通话");
-//            vbox.setAlignment(Pos.CENTER);
-//            HBox hbox = new HBox();
-//            Button accept = new Button("接受");
-//            Button reject = new Button("拒绝");
-//            accept.setOnMouseClicked((event) -> {
-//                Content.client.sendVideoChatReply(from, "ok");
-//                alert.close();
-//            });
-//            reject.setOnMouseClicked((event) -> {
-//                Content.client.sendVideoChatReply(from, "reject");
-//                alert.close();
-//            });
-//            hbox.getChildren().addAll(accept, reject);
-//            vbox.getChildren().addAll(label, hbox);
-//
-//            Scene scene = new Scene(vbox);
-//            alert.setScene(scene);
-//            alert.setTitle("视频请求");
-//            alert.show();
-//        });
-//
+        System.out.println("用户"+Content.idNameRecord.get(from)+"向你发起了视频通话");
+        //聊天界面显示,能够选择接收或拒绝
+        if (Content.mainHandler!=null){
+            msg=new android.os.Message();
+            msg.obj=from;
+            msg.what= Common.handler_videoChatRequest;
+            Content.mainHandler.sendMessage(msg);
+        }
 
     }
 

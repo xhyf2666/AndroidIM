@@ -1,6 +1,7 @@
 package com.example.chatroom.Activity
 
 import android.Manifest
+import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -41,6 +42,9 @@ class PrivateActivity : AppCompatActivity() {
                     msgs.add(item)
                     adapter.notifyDataSetChanged()
                 }
+                Common.handler_videoChatReject->{
+                    showDialog("视频通话",msg.obj.toString())
+                }
             }
         }
     }
@@ -77,6 +81,16 @@ class PrivateActivity : AppCompatActivity() {
             val intent = Intent(Intent.ACTION_PICK)
             intent.type = "*/*"
             startActivityForResult(intent, RequestCodeGetFile)
+        }
+
+        //发送视频请求
+        findViewById<ImageButton>(R.id.button_video_chat)?.setOnClickListener(){
+            checkPermission()
+            Content.client.startVideoChat(frientID)
+            Toast.makeText(this,"等待对方回应",Toast.LENGTH_SHORT).show()
+            val item=ChatItem(false,"发起视频通话","",Content.id)
+            msgs.add(item)
+            adapter.notifyDataSetChanged()
         }
         //监听键盘
         let {
@@ -132,6 +146,14 @@ class PrivateActivity : AppCompatActivity() {
         }
     }
 
+    private fun showDialog(title:String ,message:String) {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle(title)
+        builder.setMessage(message)
 
+        builder.setPositiveButton("确定", null)
+        val dialog = builder.create()
+        dialog.show()
+    }
 
 }

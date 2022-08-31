@@ -20,6 +20,7 @@ public class Content {
     public static Handler privateHandler;
     public static Handler groupChatHandler;
     public static Handler privateChatHandler;
+    public static Handler mainHandler;
     //public static ArrayList<String> msg = new ArrayList<>();
     public static String foucedPrivateUser;
     public static HashMap<String, Integer> userList = new HashMap();//当前的用户列表<用户名， 用户ID>

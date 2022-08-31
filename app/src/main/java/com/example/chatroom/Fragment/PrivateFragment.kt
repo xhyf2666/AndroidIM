@@ -83,8 +83,8 @@ class PrivateFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         Thread(Runnable {
-            Content.client.getUserNameList()
             Content.client.getUserList()
+            Content.client.getUserNameList()
         }).start()
     }
 
