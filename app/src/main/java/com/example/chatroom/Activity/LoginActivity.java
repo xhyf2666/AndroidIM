@@ -75,7 +75,7 @@ public class LoginActivity extends AppCompatActivity {
                 String password=password_text.getText().toString();
 
 
-                if (userName.equals("") ||password.equals("")){
+                if (userName.equals("") || password.equals("")){
                     Toast toast=Toast.makeText(getBaseContext(), "账号或密码为空！", Toast.LENGTH_SHORT);
                     toast.show();
                 }
