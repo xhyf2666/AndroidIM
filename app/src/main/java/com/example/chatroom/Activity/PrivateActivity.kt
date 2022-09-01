@@ -1,6 +1,7 @@
 package com.example.chatroom.Activity
 
 import android.Manifest
+import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -16,11 +17,14 @@ import androidx.core.content.ContextCompat
 import com.example.chatroom.Adapter.ChatAdapter
 import com.example.chatroom.Item.ChatItem
 import com.example.chatroom.R
+import com.example.chatroom.Utils.FileSaver
+import com.example.chatroom.Utils.RealPathUtil
 import com.example.chatroom.model.Common
 import com.example.chatroom.model.Content
 import com.google.gson.GsonBuilder
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventListener
+import java.io.File
 
 class PrivateActivity : AppCompatActivity() {
 
@@ -53,6 +57,16 @@ class PrivateActivity : AppCompatActivity() {
                     val intent = Intent(baseContext, VideoChatActivity::class.java)
                     startActivity(intent)
                 }
+                Common.handler_fileInfo->{
+                    var fileSaver= msg.obj as FileSaver
+                    val item=ChatItem(true,fileSaver.fileName,Content.idNameRecord[fileSaver.from],fileSaver.from,fileSaver)
+                    msgs.add(item)
+                    adapter.notifyDataSetChanged()
+                }
+                Common.handler_fileReceiveSuccess->{
+                    var fileSaver= msg.obj as FileSaver
+                    Toast.makeText(baseContext,fileSaver.fileName+"接收成功",Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }
@@ -73,6 +87,15 @@ class PrivateActivity : AppCompatActivity() {
 
         adapter = ChatAdapter(this, R.layout.chat_item, msgs)
         messageList?.adapter=adapter
+
+        messageList?.setOnItemClickListener { parent,view,position,id ->
+            var item= msgs?.get(position) as ChatItem
+            if(item.fileSaver!=null){
+                Toast.makeText(this,item.fileSaver.fileName,Toast.LENGTH_SHORT).show()
+                showDonwloadDialog(item.fileSaver)
+            }
+        }
+
         findViewById<Button>(R.id.buttonPrivateSend)?.setOnClickListener(){
             val str=input?.text.toString()
             if (!str.equals("")){
@@ -84,7 +107,7 @@ class PrivateActivity : AppCompatActivity() {
             }
         }
         //发送文件
-        findViewById<ImageButton>(R.id.button_send_file)?.setOnClickListener(){
+        findViewById<ImageButton>(R.id.button_send_file_private)?.setOnClickListener(){
             checkPermission()
             val intent = Intent(Intent.ACTION_PICK)
             intent.type = "*/*"
@@ -147,6 +170,34 @@ class PrivateActivity : AppCompatActivity() {
         }
     }
 
+    private fun showDonwloadDialog(fileSaver: FileSaver) {
+        val builder = AlertDialog.Builder(this)
+        if(fileSaver.isFinish){
+            builder.setTitle("文件下载完成")
+            builder.setMessage("文件名:"+fileSaver.fileName+"\n保存路径:\n"+fileSaver.location)
+
+            builder.setPositiveButton(
+                "确定"
+            ) { _, _ ->
+            }
+            val dialog = builder.create()
+            dialog.show()
+        }
+        else{
+            builder.setTitle("文件下载")
+            builder.setMessage("文件名:"+fileSaver.fileName+"\n您确定要下载当前文件吗？")
+
+            builder.setPositiveButton(
+                "确定"
+            ) { _, _ ->
+                Content.client.receiveFilePrivate(fileSaver)
+            }
+            builder.setNegativeButton("取消", null)
+            val dialog = builder.create()
+            dialog.show()
+        }
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.getItemId()) {
             android.R.id.home -> {
@@ -183,6 +234,29 @@ class PrivateActivity : AppCompatActivity() {
         builder.setPositiveButton("确定", null)
         val dialog = builder.create()
         dialog.show()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, intentData: Intent?) {
+        super.onActivityResult(requestCode, resultCode, intentData)
+
+        //
+        if(resultCode== Activity.RESULT_OK){
+            when(requestCode){
+                RequestCodeGetFile->{
+                    //发送文件
+                    intentData?.let { data ->
+                        var uri=data.data
+                        var file= RealPathUtil.getRealPath(this,uri)
+                        System.out.println()
+                        Content.client.sendFilePrivate(file,frientID)
+
+                        val item=ChatItem(false,"发送文件:"+ File(file).name,"自己",Content.id)
+                        msgs.add(item)
+                        adapter.notifyDataSetChanged()
+                    }
+                }
+            }
+        }
     }
 
     override fun onDestroy() {

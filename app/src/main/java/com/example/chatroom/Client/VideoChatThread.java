@@ -48,15 +48,7 @@ public class VideoChatThread implements Runnable{
                 if(img==null)
                     continue;
                 if (Content.videoChatHandler!=null){
-                    Log.d("videoImg","收到了一张图片");
                     Message msg=new Message();
-//                    Matrix matrix = new Matrix();
-//
-//                    matrix.postRotate(90);
-//
-//                    Bitmap scaledBitmap = Bitmap.createScaledBitmap(img, img.getWidth(), img.getHeight(), true);
-//
-//                    Bitmap rotatedBitmap = Bitmap.createBitmap(scaledBitmap, 0, 0, scaledBitmap.getWidth(), scaledBitmap.getHeight(), matrix, true);
                     msg.obj=img;
                     msg.what= Common.handler_videoImgUpdate;
                     Content.videoChatHandler.sendMessage(msg);

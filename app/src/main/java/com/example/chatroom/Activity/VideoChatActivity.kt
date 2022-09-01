@@ -1,8 +1,10 @@
 package com.example.chatroom.Activity
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.content.pm.PackageManager
 import android.graphics.*
-import android.media.Image
+import android.media.*
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -18,6 +20,7 @@ import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import com.example.chatroom.Utils.MImageUtil
@@ -29,6 +32,7 @@ import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.nio.ByteBuffer
 import java.util.concurrent.Executors
+import kotlin.properties.Delegates
 
 
 class VideoChatActivity : AppCompatActivity() {
@@ -37,11 +41,20 @@ class VideoChatActivity : AppCompatActivity() {
     private var preview: Preview? = null
     private var camera: Camera? = null
     private var isBack=false
+    private lateinit var mRecorder:AudioRecord
+    private lateinit var mAudioTrack: AudioTrack
+    private lateinit var imageAnalysis:ImageAnalysis
+    private var bufferSize=0
     private val handler = object : Handler(Looper.getMainLooper()) {
         override fun handleMessage(msg: Message) {
             when (msg.what) {
                 Common.handler_videoImgUpdate->{
                     binding.previewViewOther.setImageBitmap(msg.obj as Bitmap)
+                }
+                Common.handler_voiceData->{
+                    if(mAudioTrack!=null) {
+                        mAudioTrack.write(msg.obj as ByteArray, 0, bufferSize)
+                    }
                 }
             }
         }
@@ -60,13 +73,34 @@ class VideoChatActivity : AppCompatActivity() {
             Toast.makeText(this,"切换前后摄像头", Toast.LENGTH_SHORT).show()
             if(isBack){
                 bindPreview(cameraProvider, binding.previewViewSelf,CameraSelector.DEFAULT_BACK_CAMERA)
+                cameraProvider.bindToLifecycle(this as LifecycleOwner, CameraSelector.DEFAULT_BACK_CAMERA, imageAnalysis, preview)
             }
             else{
                 bindPreview(cameraProvider, binding.previewViewSelf,CameraSelector.DEFAULT_FRONT_CAMERA)
+                cameraProvider.bindToLifecycle(this as LifecycleOwner, CameraSelector.DEFAULT_FRONT_CAMERA, imageAnalysis, preview)
             }
             isBack=!isBack
         }
+        val sampleRateInHz = 44100;
+        val channelConfig = AudioFormat.CHANNEL_IN_MONO;
+        val audioFormat = AudioFormat.ENCODING_PCM_16BIT;
+        bufferSize = AudioRecord.getMinBufferSize(sampleRateInHz, channelConfig, audioFormat);
         setUpCamera(binding.previewViewSelf)
+
+
+        Thread{
+            checkPermission()
+            mRecorder = AudioRecord(MediaRecorder.AudioSource.MIC, sampleRateInHz, channelConfig, audioFormat, bufferSize)
+            mAudioTrack= AudioTrack(AudioManager.STREAM_MUSIC, sampleRateInHz, channelConfig, audioFormat, bufferSize,AudioTrack.MODE_STREAM)
+            mAudioTrack.play()
+            mRecorder.startRecording()
+            var sendData = ByteArray(4096)
+            var receiveData = ByteArray(4096)
+            while(Content.isVoice){
+                mRecorder.read(sendData, 0, sendData.size);
+                Content.voiceOutputStream.write(sendData)
+            }
+        }
     }
 
     @SuppressLint("RestrictedApi", "UnsafeOptInUsageError")
@@ -78,7 +112,7 @@ class VideoChatActivity : AppCompatActivity() {
                 cameraProvider = cameraProviderFuture.get()
                 bindPreview(cameraProvider, previewView,CameraSelector.DEFAULT_FRONT_CAMERA)
                 val  executor = Executors.newFixedThreadPool(2);
-                val imageAnalysis = ImageAnalysis.Builder()
+                imageAnalysis = ImageAnalysis.Builder()
                     // enable the following line if RGBA output is needed.
                     //.setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_RGBA_8888)
                     .setTargetResolution(Size(1280, 720))
@@ -86,12 +120,6 @@ class VideoChatActivity : AppCompatActivity() {
                     .build()
                 imageAnalysis.setAnalyzer(executor, ImageAnalysis.Analyzer { imageProxy ->
                     val rotationDegrees = imageProxy.imageInfo.rotationDegrees
-//                    var bitmap=imageProxy.image?.toBitmap()
-//                    val matrix = Matrix()
-//                    matrix.postRotate(imageProxy.imageInfo.rotationDegrees.toFloat())
-//                    val bitmap2: Bitmap? = bitmap?.let {
-//                        Bitmap.createBitmap(it, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true)
-//                    }
                     val imageBytes=MImageUtil.imageToJpegByteArray(imageProxy)
                     writeImage(imageBytes.rotate(rotationDegrees))
 
@@ -146,6 +174,7 @@ class VideoChatActivity : AppCompatActivity() {
         super.onDestroy()
         Content.videoChatHandler=null
         Content.videoOutputStream=null
+        Content.voiceOutputStream=null
         Content.isVideo=false
         Content.isVoice=false
     }
@@ -185,5 +214,26 @@ class VideoChatActivity : AppCompatActivity() {
         val stream = ByteArrayOutputStream()
         bmp.compress(Bitmap.CompressFormat.JPEG, 100, stream)
         return stream.toByteArray()
+    }
+
+    //检查权限，获取权限
+    public fun checkPermission() {
+        val permissions = arrayOf(
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.CAMERA,
+            Manifest.permission.RECORD_AUDIO
+        )
+        val requireList = ArrayList<String>()
+        for (permission in permissions) {
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    permission
+                ) != PackageManager.PERMISSION_GRANTED
+            ) requireList.add(permission)
+        }
+        if (requireList.isNotEmpty()) {
+            ActivityCompat.requestPermissions(this, permissions, 1)
+        }
     }
 }

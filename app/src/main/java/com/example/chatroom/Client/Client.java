@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.example.chatroom.DataBase.Message;
 import com.example.chatroom.DataBase.MessageType;
+import com.example.chatroom.Utils.FileSaver;
 import com.google.gson.Gson;
 import com.example.chatroom.model.Content;
 import com.google.gson.GsonBuilder;
@@ -143,21 +144,29 @@ public class Client {
         sendMsg(MessageType.FILE_INFO,to,"1;"+file.length()+";"+file.getName());
     }
 
-//    public void receiveFilePrivate(String filename,Long fileLength,int from){
-//        //TODO
-//        FileSaver fileSaver=Content.privateFileReceiveMap.get(from).get(filename);
-//        fileSaver.startSave();
-//        Content.currentDownloadFileMap.put(Content.currentDownloadFileMap.size()+1,fileSaver);
-//        sendMsg(MessageType.RECEIVE_FILE,fileSaver.getFrom(),"0;"+Content.currentDownloadFileMap.size()+";"+filename);
-//    }
-//
-//    public void receiveFileGroup(String filename,Long fileLength,int from,int groupID){
-//        //TODO
-//        FileSaver fileSaver=Content.groupFileReceiveMap.get(from).get(filename);
-//        fileSaver.startSave();
-//        Content.currentDownloadFileMap.put(Content.currentDownloadFileMap.size()+1,fileSaver);
-//        sendMsg(MessageType.RECEIVE_FILE,fileSaver.getFrom(),"1;"+Content.currentDownloadFileMap.size()+";"+groupID+";"+filename);
-//    }
+    public void receiveFilePrivate(String filename,Long fileLength,int from){
+        //TODO
+        FileSaver fileSaver=Content.privateFileReceiveMap.get(from).get(filename);
+        fileSaver.startSave();
+        Content.currentDownloadFileMap.put(Content.currentDownloadFileMap.size()+1,fileSaver);
+        sendMsg(MessageType.RECEIVE_FILE,fileSaver.getFrom(),"0;"+Content.currentDownloadFileMap.size()+";"+filename);
+    }
+
+    public void receiveFilePrivate(FileSaver fileSaver){
+        receiveFilePrivate(fileSaver.getFileName(),fileSaver.getFileLength(),fileSaver.getFrom());
+    }
+
+    public void receiveFileGroup(String filename,Long fileLength,int from,int groupID){
+        //TODO
+        FileSaver fileSaver=Content.groupFileReceiveMap.get(from).get(filename);
+        fileSaver.startSave();
+        Content.currentDownloadFileMap.put(Content.currentDownloadFileMap.size()+1,fileSaver);
+        sendMsg(MessageType.RECEIVE_FILE,fileSaver.getFrom(),"1;"+Content.currentDownloadFileMap.size()+";"+groupID+";"+filename);
+    }
+
+    public void receiveFileGroup(FileSaver fileSaver){
+        receiveFileGroup(fileSaver.getFileName(),fileSaver.getFileLength(),fileSaver.getFrom(), fileSaver.getTo());
+    }
 
     public void startVideoChat(int to){
         sendMsg(MessageType.VIDEO_CHAT,to,"");

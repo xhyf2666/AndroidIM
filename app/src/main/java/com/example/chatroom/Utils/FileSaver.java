@@ -1,5 +1,7 @@
 package com.example.chatroom.Utils;
 
+import android.os.Environment;
+
 import com.example.chatroom.model.Content;
 
 import java.io.File;
@@ -31,12 +33,14 @@ public class FileSaver {
     }
 
     public void startSave(){
+        String path= Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
         if(isGroup){
-            location="file/group/"+to+"/"+from+"/";
+            location=path+"/chatroom/file/group/"+to+"/"+from+"/";
         }
         else{
-            location="file/private/"+from+"/"+to+"/";
+            location=path+"/chatroom/file/private/"+from+"/"+to+"/";
         }
+        System.out.println(location);
         new File(location).mkdirs();
 
         location+=fileName;

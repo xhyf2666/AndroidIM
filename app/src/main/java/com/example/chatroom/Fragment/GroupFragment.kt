@@ -59,6 +59,10 @@ class GroupFragment : Fragment() {
                     msgs.add(item)
                     adapter.notifyDataSetChanged()
                 }
+                Common.handler_fileReceiveSuccess->{
+                    var fileSaver= msg.obj as FileSaver
+                    Toast.makeText(context,fileSaver.fileName+"接收成功",Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }
@@ -174,16 +178,30 @@ class GroupFragment : Fragment() {
 
     private fun showDonwloadDialog(fileSaver: FileSaver) {
         val builder = AlertDialog.Builder(context)
-        builder.setTitle("文件下载")
-        builder.setMessage("文件名:"+fileSaver.fileName+"\n您确定要下载当前文件吗？")
+        if(fileSaver.isFinish){
+            builder.setTitle("文件下载完成")
+            builder.setMessage("文件名:"+fileSaver.fileName+"\n保存路径:\n"+fileSaver.location)
 
-        builder.setPositiveButton(
-            "确定"
-        ) { _, _ ->;
+            builder.setPositiveButton(
+                "确定"
+            ) { _, _ ->
+            }
+            val dialog = builder.create()
+            dialog.show()
         }
-        builder.setNegativeButton("取消", null)
-        val dialog = builder.create()
-        dialog.show()
+        else{
+            builder.setTitle("文件下载")
+            builder.setMessage("文件名:"+fileSaver.fileName+"\n您确定要下载当前文件吗？")
+
+            builder.setPositiveButton(
+                "确定"
+            ) { _, _ ->
+                Content.client.receiveFileGroup(fileSaver)
+            }
+            builder.setNegativeButton("取消", null)
+            val dialog = builder.create()
+            dialog.show()
+        }
     }
 
 

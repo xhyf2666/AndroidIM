@@ -11,4 +11,6 @@ public class Common {
     static public final int handler_videoChatReject=8;
     static public final int handler_videoChatAccept=9;
     static public final int handler_videoImgUpdate=10;
+    static public final int handler_voiceData=11;
+    static public final int handler_fileReceiveSuccess=12;
 }

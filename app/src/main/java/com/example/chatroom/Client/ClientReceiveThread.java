@@ -126,20 +126,33 @@ public class ClientReceiveThread implements Runnable {
     }
 
     private void handle(byte[] data){
-//        if(data[0]==1){
-//            int index=data[1];
-//            FileSaver fileSaver=Content.currentDownloadFileMap.get(index);
-//            int part=(data[2]&0xff)<<24|(data[3]&0xff)<<16|(data[4]&0xff)<<8|(data[5]&0xff);
-//            try {
-//                fileSaver.write(part,data);
-//                if(fileSaver.isFinish()){
-//                    System.out.println(fileSaver.getFileName()+"接收完成");
-//                    Content.currentDownloadFileMap.remove(index);
-//                }
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }
+        if(data[0]==1){
+            int index=data[1];
+            FileSaver fileSaver=Content.currentDownloadFileMap.get(index);
+            int part=(data[2]&0xff)<<24|(data[3]&0xff)<<16|(data[4]&0xff)<<8|(data[5]&0xff);
+            try {
+                fileSaver.write(part,data);
+                if(fileSaver.isFinish()){
+                    //TODO
+                    System.out.println(fileSaver.getFileName()+"接收完成");
+                    if(Content.privateChatHandler!=null){
+                        msg = new android.os.Message();
+                        msg.obj = fileSaver;
+                        msg.what = Common.handler_fileReceiveSuccess;
+                        Content.privateChatHandler.sendMessage(msg);
+                    }
+                    else{
+                        msg = new android.os.Message();
+                        msg.obj = fileSaver;
+                        msg.what = Common.handler_fileReceiveSuccess;
+                        Content.groupChatHandler.sendMessage(msg);
+                    }
+                    Content.currentDownloadFileMap.remove(index);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 
@@ -242,34 +255,19 @@ public class ClientReceiveThread implements Runnable {
                 msg.what= Common.handler_fileInfo;
                 Content.groupChatHandler.sendMessage(msg);
             }
-//            //此时默认下载文件
-//            //Content.client.receiveFileGroup(fileSaver.getFileName(),fileSaver.getFileLength(),fileSaver.getFrom(),fileSaver.getTo());
-        }
+       }
         else {
-//            //在聊天界面显示相应提示
-//            if(Content.privateChatRecord.containsKey(from)){
-//                Content.privateChatRecord.get(from).add("0" + filename);
-//            }else{
-//                ArrayList<String> newRecord = new ArrayList<>();
-//                newRecord.add("1" + filename);
-//                Content.privateChatRecord.put(from, newRecord);
-//            }
-//            Platform.runLater(() ->{
-//                if(Content.privateChatWindows.containsKey(from)){
-//                    System.out.println("addPrivate");
-//                    Content.privateChatWindows.get(from).
-//                            addFile(from, fileLength, filename);
-//                }
-//            });
-//
-//            //
-//            FileSaver fileSaver=new FileSaver(from,Content.id,fileLength,filename,isGroup);
-//            if(Content.privateFileReceiveMap.get(from)==null)
-//                Content.privateFileReceiveMap.put(from,new HashMap<String,FileSaver>());
-//            Content.privateFileReceiveMap.get(from).put(filename,fileSaver);
-//            System.out.println("" + from + "尝试发送文件" + filename + ",文件字节" + fileLength);
-//
-//            //Content.client.receiveFilePrivate(fileSaver.getFileName(),fileSaver.getFileLength(),fileSaver.getFrom());
+            FileSaver fileSaver = new FileSaver(from, to, fileLength, filename, isGroup);
+            if (Content.privateFileReceiveMap.get(from) == null)
+                Content.privateFileReceiveMap.put(from, new HashMap<String, FileSaver>());
+            Content.privateFileReceiveMap.get(from).put(filename, fileSaver);
+            System.out.println("" + from + "尝试发送文件(私聊)" + filename + ",文件字节" + fileLength);
+            if (Content.privateChatHandler != null) {
+                msg = new android.os.Message();
+                msg.obj = fileSaver;
+                msg.what = Common.handler_fileInfo;
+                Content.privateChatHandler.sendMessage(msg);
+            }
         }
     }
 
@@ -284,9 +282,9 @@ public class ClientReceiveThread implements Runnable {
                     Content.mainHandler.sendMessage(msg);
 
                 Content.isVideo=true;
-//                Content.isVoice=true;
+                Content.isVoice=true;
                 new Thread(new VideoChatThread(Content.server,Content.port+1,client.getId(),from)).start();
-//                new Thread(new VoiceChatThread(Content.server,Content.port+2,client.getId(),from)).start();
+                new Thread(new VoiceChatThread(Content.server,Content.port+2,client.getId(),from)).start();
                 }
             }
             else if(body.equals("reject")){
